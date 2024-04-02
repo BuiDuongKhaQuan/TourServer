@@ -10,6 +10,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
 
+//Static
+app.use(express.static(path.join(__dirname, 'public')));
+
 const connection = mysql.createConnection({
     host: 'localhost', // Thay đổi tùy theo host MySQL của bạn
     user: 'root', // Thay đổi tùy theo tên người dùng MySQL của bạn
