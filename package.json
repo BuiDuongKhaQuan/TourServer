@@ -1,24 +1,27 @@
 {
-  "name": "tour-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon --inspect index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BuiDuongKhaQuan/TourServer.git"
-  },
-  "author": "quanbui",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/BuiDuongKhaQuan/TourServer/issues"
-  },
-  "homepage": "https://github.com/BuiDuongKhaQuan/TourServer#readme",
-  "dependencies": {
-    "express": "^4.19.1",
-    "nodemon": "^3.1.0"
-  }
+    "name": "tour-server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "nodemon --inspect src/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/BuiDuongKhaQuan/TourServer.git"
+    },
+    "author": "quanbui",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/BuiDuongKhaQuan/TourServer/issues"
+    },
+    "homepage": "https://github.com/BuiDuongKhaQuan/TourServer#readme",
+    "dependencies": {
+        "express": "^4.19.1",
+        "express-handlebars": "^7.1.2",
+        "morgan": "^1.10.0",
+        "nodemon": "^3.1.0"
+    }
 }
