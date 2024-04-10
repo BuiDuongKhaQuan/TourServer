@@ -4,7 +4,7 @@ import { engine } from 'express-handlebars';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import routes from './routes/routes.js';
-import { connection } from './config/db/connect.js';
+import session from 'express-session';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +20,16 @@ app.use(morgan('combined'));
 app.engine('hbs', engine({ extname: 'hbs' }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resources/views'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+    session({
+        secret: 'buiduongkhaquan',
+        resave: true,
+        saveUninitialized: true,
+    }),
+);
 
 routes(app);
 

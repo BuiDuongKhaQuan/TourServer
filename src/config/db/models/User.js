@@ -1,4 +1,5 @@
-import Model from '../../config/db/model.js';
+import Model from '../model.js';
+import { connection } from '../connect.js';
 
 class UserModel extends Model {
     constructor() {
