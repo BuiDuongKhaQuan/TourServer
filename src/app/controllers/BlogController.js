@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import BlogModel from '../models/Blog.js';
+import BlogModel from '../../config/db/models/Blog.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'src/uploads/' });

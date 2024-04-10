@@ -17,10 +17,10 @@ class Model {
     }
 
     //get row by id and return the result object:
-    find(id) {
+    find(column, value) {
         let cThis = this;
         return new Promise(function (myResolve, myReject) {
-            connection.query('SELECT * FROM ?? WHERE id = ?', [cThis.table, id], function (error, result) {
+            connection.query('SELECT * FROM ?? WHERE ?? = ?', [cThis.table, column, value], function (error, result) {
                 if (error) throw error;
                 myResolve(result[0]);
             });
@@ -33,7 +33,7 @@ class Model {
         return new Promise(function (myResolve, myReject) {
             connection.query('INSERT INTO ?? SET ?', [cThis.table, data], function (error, result) {
                 if (error) throw error;
-                let data = cThis.find(result.insertId);
+                let data = cThis.find('id', result.insertId);
                 data.then(function (value) {
                     myResolve(value);
                 }).catch(function (error) {
@@ -49,7 +49,7 @@ class Model {
         return new Promise(function (myResolve, myReject) {
             connection.query('UPDATE  ?? SET ? WHERE id = ?', [cThis.table, data, id], function (error, result) {
                 if (error) throw error;
-                let data = cThis.find(id);
+                let data = cThis.find('id', id);
                 data.then(function (value) {
                     myResolve(value);
                 }).catch(function (error) {

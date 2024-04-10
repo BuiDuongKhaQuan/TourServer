@@ -9,7 +9,7 @@ function route(app) {
     app.use('/tours', tourRouter);
     app.use('/destinations', destinationRoute);
     // app.use('/login', loginRouter);
-    app.get('/users', userRouter);
+    app.use('/users', userRouter);
 }
 
 export default route;

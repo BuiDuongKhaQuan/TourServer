@@ -1,4 +1,4 @@
-import Model from '../../config/db/model.js';
+import Model from '../model.js';
 
 class DestinationModel extends Model {
     constructor() {
