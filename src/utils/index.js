@@ -1,4 +1,5 @@
 import randomstring from 'randomstring';
+import bcrypt from 'bcrypt';
 
 const filterRequestBody = (body, fields) => {
     const filteredData = {};
@@ -17,4 +18,9 @@ const generateOTP = () => {
     });
 };
 
-export { filterRequestBody, generateOTP };
+const encrypt = (value) => {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(value, salt);
+};
+
+export { filterRequestBody, generateOTP, encrypt };

@@ -2,8 +2,10 @@ import express from 'express';
 import { default as destinationController } from '../app/controllers/DestinationController.js';
 const destinationRoute = express.Router();
 
-destinationRoute.use('/', destinationController.get);
-destinationRoute.use('/:slug', destinationController.show);
-destinationRoute.use('/', destinationController.index);
+destinationRoute.post('/', destinationController.create);
+destinationRoute.get('/', destinationController.get_all);
+destinationRoute.get('/:id', destinationController.find);
+destinationRoute.put('/:id/edit', destinationController.update);
+destinationRoute.delete('/:id', destinationController.delete);
 
 export { destinationRoute };

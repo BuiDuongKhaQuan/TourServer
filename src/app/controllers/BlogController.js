@@ -1,18 +1,13 @@
 import express from 'express';
 import multer from 'multer';
-import BlogModel from '../../config/db/models/Blog.js';
+import blogModel from '../../config/db/models/Blog.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'src/uploads/' });
 class BlogController {
-    index(req, res) {
-        res.render('home');
-    }
-    show(req, res) {
-        res.send('Bui Duong Kha Quan');
-    }
-    async get(req, res) {
-        let result = BlogModel.get_all();
+    get_limit_offset(req, res) {
+        const { limit, offset } = req.params;
+        let result = blogModel.get_limit_offset(req.params ? limit : 20, req.params ? offset : 0);
         result
             .then(function (value) {
                 console.log(value);
@@ -20,6 +15,74 @@ class BlogController {
             })
             .catch(function (error) {
                 console.log(error);
+            });
+    }
+    get_all(req, res) {
+        let result = blogModel.get_all();
+        result
+            .then(function (value) {
+                console.log(value);
+                res.json(value);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+    find(req, res) {
+        let result = blogModel.find_by_id(req.params.id);
+        result
+            .then(function (value) {
+                console.log(value);
+                res.json(value);
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.status(500).json({ error: error.message });
+            });
+    }
+    create(req, res) {
+        const { topic, information } = req.body;
+        const tour = {
+            topic,
+            information,
+            status: 1,
+            create_at: new Date(),
+        };
+        if (!topic || !information || !information) return res.status(400).json({ error: 'Missing required fields!!' });
+        let result = blogModel.create(tour);
+        result
+            .then(function (value) {
+                console.log(value);
+                res.json(value);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+    update(req, res) {
+        const allowedFields = ['topic', 'information', 'status'];
+        const tourData = filterRequestBody(req.body, allowedFields);
+        let result = blogModel.update_by_id(req.params.id, tourData);
+        result
+            .then(function (value) {
+                console.log(value);
+                res.json(value);
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.status(500).json({ error: error.message });
+            });
+    }
+    delete(req, res) {
+        let result = blogModel.delete(req.params.id);
+        result
+            .then(function (value) {
+                console.log(value);
+                res.json({ message: 'Delete successful' });
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.status(500).json({ error: error.message });
             });
     }
 }

@@ -1,13 +1,14 @@
 import express from 'express';
 import multer from 'multer';
-import destinationModel from '../../config/db/models/Destination.js';
+import bookTourModel from '../../config/db/models/Book-tour.js';
+import { filterRequestBody } from '../../utils/index.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'src/uploads/' });
-class DestinationController {
+class BookTourController {
     get_limit_offset(req, res) {
         const { limit, offset } = req.params;
-        let result = destinationModel.get_limit_offset(req.params ? limit : 20, req.params ? offset : 0);
+        let result = bookTourModel.get_limit_offset(req.params ? limit : 20, req.params ? offset : 0);
         result
             .then(function (value) {
                 console.log(value);
@@ -18,7 +19,7 @@ class DestinationController {
             });
     }
     get_all(req, res) {
-        let result = destinationModel.get_all();
+        let result = bookTourModel.get_all();
         result
             .then(function (value) {
                 console.log(value);
@@ -29,7 +30,7 @@ class DestinationController {
             });
     }
     find(req, res) {
-        let result = destinationModel.find_by_id(req.params.id);
+        let result = bookTourModel.find_by_id(req.params.id);
         result
             .then(function (value) {
                 console.log(value);
@@ -41,17 +42,36 @@ class DestinationController {
             });
     }
     create(req, res) {
-        const { location, trip, information } = req.body;
-        const destination = {
-            location,
-            trip,
-            information,
+        const { id_user, id_tour, name, email, phone, id_ticket, person_quantity, child_quantity, date, message } =
+            req.body;
+        const bookTour = {
+            id_user,
+            id_tour,
+            name,
+            email,
+            phone,
+            id_ticket,
+            person_quantity,
+            child_quantity,
+            date,
+            message,
             status: 1,
-            create_at: new Date(),
+            create_at: new email(),
         };
-        if (!location || !location || !trip || !information || !information)
+        if (
+            !id_user ||
+            !id_tour ||
+            !name ||
+            !email ||
+            !phone ||
+            !id_ticket ||
+            !person_quantity ||
+            !child_quantity ||
+            !date ||
+            !message
+        )
             return res.status(400).json({ error: 'Missing required fields!!' });
-        let result = destinationModel.create(destination);
+        let result = bookTourModel.create(bookTour);
         result
             .then(function (value) {
                 console.log(value);
@@ -62,9 +82,21 @@ class DestinationController {
             });
     }
     update(req, res) {
-        const allowedFields = ['location', 'trip', 'information', 'status'];
-        const destinationData = filterRequestBody(req.body, allowedFields);
-        let result = destinationModel.update_by_id(req.params.id, destinationData);
+        const allowedFields = [
+            'id_user',
+            'id_tour',
+            'name',
+            'email',
+            'phone',
+            'id_ticket',
+            'person_quantity',
+            'child_quantity',
+            'date',
+            'message',
+            'status',
+        ];
+        const bookTourData = filterRequestBody(req.body, allowedFields);
+        let result = bookTourModel.update_by_id(req.params.id, bookTourData);
         result
             .then(function (value) {
                 console.log(value);
@@ -76,7 +108,7 @@ class DestinationController {
             });
     }
     delete(req, res) {
-        let result = destinationModel.delete(req.params.id);
+        let result = bookTourModel.delete(req.params.id);
         result
             .then(function (value) {
                 console.log(value);
@@ -89,4 +121,4 @@ class DestinationController {
     }
 }
 
-export default new DestinationController();
+export default new BookTourController();
