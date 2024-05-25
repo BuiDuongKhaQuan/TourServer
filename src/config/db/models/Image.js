@@ -1,8 +1,13 @@
 import Model from '../model.js';
-
 class ImageModel extends Model {
     constructor() {
         super('images');
+    }
+    update_destination_image(id, image) {
+        return this.update('destination_id', id, { image });
+    }
+    find_destination_image(id) {
+        return this.find('destination_id', id);
     }
     find_avatar(id) {
         return this.find('user_id', id);
