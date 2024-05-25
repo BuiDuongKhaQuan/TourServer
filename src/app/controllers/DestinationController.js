@@ -85,25 +85,33 @@ class DestinationController {
         const destinationData = filterRequestBody(req.body, allowedFields);
 
         try {
-            // Cập nhật dữ liệu destination
-            const destination = await destinationModel.update_by_id(id, destinationData);
-
-            let linkImage;
+            let destination = null;
+            if (Object.keys(destinationData).length !== 0) {
+                destination = await destinationModel.update_by_id(id, destinationData);
+            }
+            let linkImage = null;
             if (req.file) {
-                // Xử lý tải lên tệp nếu tệp được cung cấp
                 const fileStream = new Readable();
                 fileStream.push(req.file.buffer);
                 fileStream.push(null);
                 const data = await uploadFile(fileStream, req.file.originalname);
                 linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
-                await destinationModel.update_image_by_id(destination.id, linkImage);
+                const imageDestination = await destinationModel.find_image_by_id(id);
+                if (imageDestination) {
+                    await destinationModel.update_image_by_id(id, linkImage);
+                } else {
+                    await destinationModel.upload_image_by_id(id, linkImage);
+                }
             }
-
+            if (!destination) {
+                destination = await destinationModel.find_by_id(id);
+            }
+            console.log(destination);
             res.send({
                 message: 'Update successfully',
                 data: {
                     ...destination,
-                    image: linkImage || destination.image, // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
+                    image: linkImage, // Sử dụng liên kết hình ảnh đã tải lên nếu có
                 },
             });
         } catch (error) {

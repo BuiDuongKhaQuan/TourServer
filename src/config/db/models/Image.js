@@ -11,6 +11,7 @@ class ImageModel extends Model {
     }
 
     update_destination_image(id, image) {
+        console.log(id, image);
         return this.update('destination_id', id, { image });
     }
     find_destination_image(id) {
