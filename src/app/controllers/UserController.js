@@ -46,30 +46,34 @@ class UserController {
                 console.log(error);
             });
     }
-    login(req, res) {
+    async login(req, res) {
         const { email, password } = req.body;
-        const user = userModel.find_by_email(email);
-        user.then(async (user) => {
+        console.log(email);
+        try {
+            const user = await userModel.find_by_email(email);
+            if (!user) return res.status(401).json({ error: 'Email does not exist!' });
             const validPassword = await bcrypt.compare(password, user.password);
-            console.log(user);
-            if (validPassword) {
-                req.session.login = true;
-                req.session.userInfo = {
-                    id: user.id,
-                    email: user.email,
-                };
-                console.log(req.session);
-                res.json({ message: 'Login successful!', user });
-            } else {
-                res.status(400).json({ error: 'Password incorrect!' });
-            }
-        }).catch((error) => {
-            console.log(error);
-            res.status(401).json({ error: 'Email not exit!' });
-        });
+            if (!validPassword) return res.status(400).json({ error: 'Password incorrect!' });
+            const avatar = await userModel.find_avatar_by_id(user.id);
+            req.session.login = true;
+            req.session.userInfo = {
+                id: user.id,
+                email: user.email,
+            };
+            const userWithAvatar = {
+                ...user,
+                avatar: avatar ? avatar.image : null,
+            };
+
+            return res.json({ message: 'Login successful!', user: userWithAvatar });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
     }
     register(req, res) {
         const { name, password, email } = req.body;
+        console.log(req.body);
         if (!name || !password || !email)
             return res.status(400).json({ error: 'Missing required fields: name, password, email' });
 
@@ -86,7 +90,7 @@ class UserController {
                     otp: otp,
                     otpExpiration: Date.now() + 5 * 60 * 1000, // Hết hạn sau 5 phút
                 };
-
+                console.log('Register ', req.session.otpInfo);
                 await sendEmail({
                     to: email,
                     subject: 'Your OTP',
@@ -109,6 +113,34 @@ class UserController {
             .catch((error) => {
                 console.log(error);
                 res.status(500).json({ error: 'Internal Server Error' });
+            });
+    }
+    verifyOTP(req, res) {
+        const { otp, email } = req.body;
+        const { otpInfo } = req.session;
+        console.log('Verifr ', otpInfo);
+        console.log('Body ', req.body);
+
+        if (!otp || !otpInfo || !otpInfo.otp || !otpInfo.email) {
+            return res.status(400).json({ error: 'OTP information is missing or invalid' });
+        }
+        if (otp !== otpInfo.otp || email !== otpInfo.email) {
+            return res.status(400).json({ error: 'Invalid OTP or Email' });
+        }
+        if (Date.now() > otpInfo.otpExpiration) {
+            return res.status(400).json({ error: 'OTP expired' });
+        }
+
+        userModel
+            .update_by_email(email, { status: 1 })
+            .then((user) => {
+                res.json({ message: 'OTP verified successfully', user });
+                delete req.session.otpInfo;
+            })
+            .catch((error) => {
+                // Xử lý lỗi nếu có
+                console.log(error);
+                res.status(500).json({ error: 'Internal server error' });
             });
     }
     update(req, res) {
@@ -136,13 +168,13 @@ class UserController {
             fileStream.push(null);
             const avatarUser = await userModel.find_avatar_by_id(userInfo.id);
             const data = await uploadFile(fileStream, req.file.originalname);
+            const linkAvatar = `https://drive.google.com/thumbnail?id=${data.id}`;
             if (avatarUser) {
-                await userModel.update_avatar_by_id(userInfo.id, data.webViewLink);
-                console.log(data.webViewLink);
+                await userModel.update_avatar_by_id(userInfo.id, linkAvatar);
             } else {
-                await userModel.upload_avatar_by_id(userInfo.id, data.webViewLink);
+                await userModel.upload_avatar_by_id(userInfo.id, linkAvatar);
             }
-            res.send({ message: 'Uploaded file successfully' });
+            res.send({ message: 'Uploaded file successfully', avatar: linkAvatar });
         } catch (error) {
             console.log('Error uploading file:', error);
             res.status(500).send('Error uploading file');
@@ -168,31 +200,7 @@ class UserController {
                 res.status(500).json({ error: 'Internal Server Error' });
             });
     }
-    verifyOTP(req, res) {
-        const { otp, email } = req.body;
-        const { otpInfo } = req.session;
-        if (!otp || !otpInfo || !otpInfo.otp || !otpInfo.email) {
-            return res.status(400).json({ error: 'OTP information is missing or invalid' });
-        }
-        if (otp !== otpInfo.otp || email !== otpInfo.email) {
-            return res.status(400).json({ error: 'Invalid OTP or Email' });
-        }
-        if (Date.now() > otpInfo.otpExpiration) {
-            return res.status(400).json({ error: 'OTP expired' });
-        }
 
-        userModel
-            .update_by_email(email, { status: 1 })
-            .then((user) => {
-                res.json({ message: 'OTP verified successfully', user });
-                delete req.session.otpInfo;
-            })
-            .catch((error) => {
-                // Xử lý lỗi nếu có
-                console.log(error);
-                res.status(500).json({ error: 'Internal server error' });
-            });
-    }
     async change_password(req, res) {
         try {
             const { passwordNew, passwordRe, passwordOld } = req.body;

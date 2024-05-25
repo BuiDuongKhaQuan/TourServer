@@ -28,10 +28,10 @@ class Model {
             );
         });
     }
-    get_image_by_id(column, id) {
+    find_all(column, value) {
         let cThis = this;
         return new Promise(function (myResolve, myReject) {
-            connection.query('SELECT * FROM images WHERE ?? = ?', [cThis.table, column, id], function (error, result) {
+            connection.query('SELECT * FROM ?? WHERE ?? = ?', [cThis.table, column, value], function (error, result) {
                 if (error) throw error;
                 myResolve(result);
             });

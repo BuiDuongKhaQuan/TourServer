@@ -5,12 +5,21 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import routes from './routes/routes.js';
 import session from 'express-session';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
 
+app.use(
+    cors({
+        origin: 'http://localhost:2908',
+        credentials: true, //access-control-allow-credentials:true
+        optionSuccessStatus: 200,
+    }),
+);
 //Static
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -23,11 +32,14 @@ app.set('views', path.join(__dirname, 'resources/views'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(
     session({
-        secret: 'buiduongkhaquan',
+        secret: 'q',
         resave: true,
         saveUninitialized: true,
+        cookie: { secure: false },
+        store: new session.MemoryStore(),
     }),
 );
 

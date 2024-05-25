@@ -1,11 +1,14 @@
 import express from 'express';
-import { default as tourController } from '../app/controllers/TourController.js';
+import multer from 'multer';
+import tourController from '../app/controllers/TourController.js';
 const tourRouter = express.Router();
+const upload = multer();
 
-tourRouter.post('/', tourController.create);
-tourRouter.get('/', tourController.get_all);
+tourRouter.get('/all', tourController.get_all);
+tourRouter.post('/', upload.array('images', 5), tourController.create);
+
 tourRouter.get('/:id', tourController.find);
-tourRouter.put('/:id/edit', tourController.update);
-tourRouter.delete('/:id', tourController.delete);
+tourRouter.get('/', tourController.get_all_limit);
+tourRouter.post('/:id/edit', upload.single('image'), tourController.update);
 
 export { tourRouter };

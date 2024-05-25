@@ -1,11 +1,14 @@
 import express from 'express';
-import { default as destinationController } from '../app/controllers/DestinationController.js';
+import multer from 'multer';
+import destinationController from '../app/controllers/DestinationController.js';
 const destinationRoute = express.Router();
+const upload = multer();
 
-destinationRoute.post('/', destinationController.create);
-destinationRoute.get('/', destinationController.get_all);
+destinationRoute.get('/all', destinationController.get_all);
+destinationRoute.post('/', upload.single('image'), destinationController.create);
+
+destinationRoute.get('/', destinationController.get_all_limit);
 destinationRoute.get('/:id', destinationController.find);
-destinationRoute.put('/:id/edit', destinationController.update);
-destinationRoute.delete('/:id', destinationController.delete);
+destinationRoute.post('/:id/edit', upload.single('image'), destinationController.update);
 
 export { destinationRoute };

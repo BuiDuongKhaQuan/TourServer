@@ -4,9 +4,9 @@ import multer from 'multer';
 const userRouter = express.Router();
 const upload = multer();
 
-userRouter.get('/login', userController.login);
-userRouter.get('/logout', userController.logout);
-userRouter.post('/', userController.register);
+userRouter.post('/login', userController.login);
+userRouter.post('/logout', userController.logout);
+userRouter.post('/register', userController.register);
 userRouter.post('/upload', upload.single('avatar'), userController.update_avatar);
 userRouter.put('/verify', userController.verifyOTP);
 userRouter.put('/change-password', userController.change_password);

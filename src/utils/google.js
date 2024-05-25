@@ -1,22 +1,17 @@
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
+import key from '../../key.json' assert { type: 'json' };
 dotenv.config();
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
-
-const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-
-const driver = google.drive({
-    version: 'v3',
-    auth: oauth2Client,
-});
+const SCOPE = ['https://www.googleapis.com/auth/drive'];
 
 const uploadFile = async (image, name) => {
     try {
+        const authClient = await authorize();
+        const driver = google.drive({
+            version: 'v3',
+            auth: authClient,
+        });
         const createFile = await driver.files.create({
             resource: {
                 name,
@@ -33,5 +28,15 @@ const uploadFile = async (image, name) => {
         console.log(error);
     }
 };
-
+const authorize = async () => {
+    const jwtClient = new google.auth.JWT(key.client_email, null, key.private_key, SCOPE);
+    try {
+        await jwtClient.authorize();
+        console.log('Kết nối Google OAuth2 thành công!');
+        return jwtClient;
+    } catch (error) {
+        console.error('Lỗi kết nối Google OAuth2:', error);
+        throw error;
+    }
+};
 export { uploadFile };

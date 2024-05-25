@@ -13,16 +13,19 @@ class UserModel extends Model {
     get_image_by_id(id) {
         return this.get_image_by_id('user_id', id);
     }
-    update_by_id(id, user) {
-        return this.update('id', id, user);
+    async update_by_id(id, user) {
+        const data = await this.update('id', id, user);
+        let imageData;
+        if (user) {
+            imageData = await imageModel.find_avatar(id);
+        }
+        return { ...data, avatar: imageData ? imageData.image : null };
     }
     update_by_email(email, user) {
         return this.update('email', email, user);
     }
     async find_by_email(email) {
-        const user = await this.find('email', email);
-        const imageData = await imageModel.find_avatar(user.id);
-        return { ...user, avatar: imageData.image };
+        return this.find('email', email);
     }
     find_avatar_by_id(id) {
         return imageModel.find_avatar(id);
