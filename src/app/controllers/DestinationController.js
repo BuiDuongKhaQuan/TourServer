@@ -121,7 +121,6 @@ class DestinationController {
             if (!destination) {
                 destination = await destinationModel.find_by_id(id);
             }
-            console.log(destination);
             res.send({
                 message: 'Update successfully',
                 data: {

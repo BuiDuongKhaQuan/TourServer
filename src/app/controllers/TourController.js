@@ -119,9 +119,11 @@ class TourController {
 
         try {
             // Cập nhật dữ liệu destination
-            const tour = await tourModel.update_by_id(id, tourData);
-
-            let linkImage;
+            let tour = null;
+            if (Object.keys(tourData).length !== 0) {
+                tour = await tourModel.update_by_id(id, tourData);
+            }
+            let linkImage = null;
             if (req.file) {
                 // Xử lý tải lên tệp nếu tệp được cung cấp
                 const fileStream = new Readable();
@@ -129,14 +131,21 @@ class TourController {
                 fileStream.push(null);
                 const data = await uploadFile(fileStream, req.file.originalname);
                 linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
-                await tourModel.update_image_by_id(tour.id, linkImage);
+                if (linkImage) {
+                    await tourModel.update_image_by_id(id, linkImage);
+                } else {
+                    await tourModel.upload_image_by_id(id, linkImage);
+                }
+            }
+            if (!tour) {
+                tour = await tourModel.find_by_id(id);
             }
 
             res.send({
                 message: 'Update successfully',
                 data: {
                     ...destination,
-                    image: linkImage || destination.image, // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
+                    image: linkImage, // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
                 },
             });
         } catch (error) {
