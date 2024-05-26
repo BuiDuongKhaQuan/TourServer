@@ -86,7 +86,7 @@ class DestinationController {
             fileStream.push(req.file.buffer);
             fileStream.push(null);
             const data = await uploadFile(fileStream, req.file.originalname);
-            const linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
+            const linkImage = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
             await destinationModel.upload_image_by_id(destination.id, linkImage);
             res.send({ message: 'Create successfully', data: { ...destination, img: linkImage } });
         } catch (error) {
@@ -110,7 +110,7 @@ class DestinationController {
                 fileStream.push(req.file.buffer);
                 fileStream.push(null);
                 const data = await uploadFile(fileStream, req.file.originalname);
-                linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
+                linkImage = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
                 const imageDestination = await destinationModel.find_image_by_id(id);
                 if (imageDestination) {
                     await destinationModel.update_image_by_id(id, linkImage);

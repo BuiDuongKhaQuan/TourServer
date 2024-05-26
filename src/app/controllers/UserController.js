@@ -168,7 +168,7 @@ class UserController {
             fileStream.push(null);
             const avatarUser = await userModel.find_avatar_by_id(userInfo.id);
             const data = await uploadFile(fileStream, req.file.originalname);
-            const linkAvatar = `https://drive.google.com/thumbnail?id=${data.id}`;
+            const linkAvatar = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
             if (avatarUser) {
                 await userModel.update_avatar_by_id(userInfo.id, linkAvatar);
             } else {
