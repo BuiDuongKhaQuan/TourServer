@@ -97,7 +97,7 @@ class TourController {
                     fileStream.push(file.buffer);
                     fileStream.push(null);
                     return uploadFile(fileStream, file.originalname).then((data) => {
-                        const linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
+                        const linkImage = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
                         return tourModel.upload_image_by_id(tour.id, linkImage);
                     });
                 });
@@ -134,7 +134,7 @@ class TourController {
                     fileStream.push(null);
 
                     const data = await uploadFile(fileStream, file.originalname);
-                    const linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
+                    const linkImage = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
 
                     if (existingImageUrls[index]) {
                         // Cập nhật hình ảnh đã có
