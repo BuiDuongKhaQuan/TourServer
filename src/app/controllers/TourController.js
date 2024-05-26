@@ -62,7 +62,7 @@ class TourController {
                     return {
                         ...tour,
                         destination: location ? location.name : null,
-                        image: images ? images.map((image) => image.image) : null,
+                        imgs: images ? images.map((image) => image.image) : null,
                     };
                 }),
             );
@@ -106,7 +106,7 @@ class TourController {
             const images = await tourModel.find_image_by_id(tour.id);
             res.send({
                 message: 'Create successfully',
-                data: { ...tour, images: images ? images.map((image) => image.image) : [] },
+                data: { ...tour, imgs: images ? images.map((image) => image.image) : [] },
             });
         } catch (error) {
             console.log('Error creating tour:', error);
@@ -155,7 +155,7 @@ class TourController {
                 message: 'Update successfully',
                 data: {
                     ...tour,
-                    images: images ? images.map((image) => image.image) : [], // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
+                    imgs: images ? images.map((image) => image.image) : [], // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
                 },
             });
         } catch (error) {
