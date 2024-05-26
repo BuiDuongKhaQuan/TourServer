@@ -18,6 +18,21 @@ class TourController {
                 res.status(500).json({ error: 'Internal Server Error' });
             });
     }
+    get_all_size(req, res) {
+        let result = tourModel.get_all();
+        result
+            .then(function (value) {
+                if (!value || value.length === 0) {
+                    res.status(404).json({ error: 'No tours found' });
+                } else {
+                    res.json(value.length);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            });
+    }
     async find(req, res) {
         const { id } = req.params;
         try {
@@ -42,8 +57,10 @@ class TourController {
             const toursWithImages = await Promise.all(
                 tours.map(async (tour) => {
                     const images = await tourModel.find_image_by_id(tour.id);
+                    const location = await tourModel.find_location(tour.destination_id);
                     return {
                         ...tour,
+                        destination: location ? location.name : null,
                         image: images ? images.map((image) => image.image) : null,
                     };
                 }),

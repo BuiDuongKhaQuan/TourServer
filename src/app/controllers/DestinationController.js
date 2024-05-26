@@ -18,6 +18,21 @@ class DestinationController {
                 res.status(500).json({ error: 'Internal Server Error' });
             });
     }
+    get_all_size(req, res) {
+        let result = destinationModel.get_all();
+        result
+            .then(function (value) {
+                if (!value || value.length === 0) {
+                    res.status(404).json({ error: 'No destinations found' });
+                } else {
+                    res.json(value.length);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            });
+    }
     async find(req, res) {
         const { id } = req.params;
         try {
@@ -26,7 +41,7 @@ class DestinationController {
             const image = await destinationModel.find_image_by_id(destination.id);
             const destinationWithImage = {
                 ...destination,
-                image: image ? image.image : null,
+                img: image ? image.image : null,
             };
             return res.json({ message: 'Find successful!', destination: destinationWithImage });
         } catch (error) {
@@ -43,7 +58,7 @@ class DestinationController {
                     const image = await destinationModel.find_image_by_id(destination.id);
                     return {
                         ...destination,
-                        image: image ? image.image : null,
+                        img: image ? image.image : null,
                     };
                 }),
             );
@@ -73,7 +88,7 @@ class DestinationController {
             const data = await uploadFile(fileStream, req.file.originalname);
             const linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
             await destinationModel.upload_image_by_id(destination.id, linkImage);
-            res.send({ message: 'Create successfully', data: { ...destination, image: linkImage } });
+            res.send({ message: 'Create successfully', data: { ...destination, img: linkImage } });
         } catch (error) {
             console.log('Error creating destination:', error);
             res.status(500).send('Error creating destination');
@@ -111,7 +126,7 @@ class DestinationController {
                 message: 'Update successfully',
                 data: {
                     ...destination,
-                    image: linkImage, // Sử dụng liên kết hình ảnh đã tải lên nếu có
+                    img: linkImage, // Sử dụng liên kết hình ảnh đã tải lên nếu có
                 },
             });
         } catch (error) {

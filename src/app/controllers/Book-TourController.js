@@ -1,10 +1,6 @@
-import express from 'express';
-import multer from 'multer';
 import bookTourModel from '../../config/db/models/Book-tour.js';
 import { filterRequestBody } from '../../utils/index.js';
 
-const router = express.Router();
-const upload = multer({ dest: 'src/uploads/' });
 class BookTourController {
     get_limit_offset(req, res) {
         const { limit, offset } = req.params;
@@ -30,7 +26,8 @@ class BookTourController {
             });
     }
     find(req, res) {
-        let result = bookTourModel.find_by_id(req.params.id);
+        const { id } = req.params;
+        let result = bookTourModel.find_by_id(id);
         result
             .then(function (value) {
                 console.log(value);
@@ -56,7 +53,8 @@ class BookTourController {
             date,
             message,
             status: 1,
-            create_at: new email(),
+            checkout_status: 0,
+            create_at: new Date(),
         };
         if (
             !id_user ||
@@ -82,6 +80,7 @@ class BookTourController {
             });
     }
     update(req, res) {
+        const { id } = req.params;
         const allowedFields = [
             'id_user',
             'id_tour',
@@ -93,10 +92,9 @@ class BookTourController {
             'child_quantity',
             'date',
             'message',
-            'status',
         ];
         const bookTourData = filterRequestBody(req.body, allowedFields);
-        let result = bookTourModel.update_by_id(req.params.id, bookTourData);
+        let result = bookTourModel.update_by_id(id, bookTourData);
         result
             .then(function (value) {
                 console.log(value);
@@ -108,7 +106,8 @@ class BookTourController {
             });
     }
     delete(req, res) {
-        let result = bookTourModel.delete(req.params.id);
+        const { id } = req.params;
+        let result = bookTourModel.delete(id);
         result
             .then(function (value) {
                 console.log(value);

@@ -1,11 +1,13 @@
 import express from 'express';
-import { default as bookTourController } from '../app/controllers/Book-TourController.js';
+import bookTourController from '../app/controllers/Book-TourController.js';
 const bookTourRouter = express.Router();
 
+bookTourRouter.get('/all', bookTourController.get_all);
+// bookTourRouter.get('/all-size', bookTourController.get_all_size);
+bookTourRouter.post('/:id/edit', bookTourController.update);
 bookTourRouter.post('/', bookTourController.create);
-bookTourRouter.get('/', bookTourController.get_all);
+
+// bookTourRouter.get('/', bookTourController.get_all_limit);
 bookTourRouter.get('/:id', bookTourController.find);
-bookTourRouter.put('/:id/edit', bookTourController.update);
-bookTourRouter.delete('/:id', bookTourController.delete);
 
 export { bookTourRouter };

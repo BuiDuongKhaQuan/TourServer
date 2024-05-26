@@ -1,6 +1,6 @@
 import Model from '../model.js';
 import imageModel from '../models/Image.js';
-
+import destinationModel from '../models/Destination.js';
 class TourModel extends Model {
     constructor() {
         super('tours');
@@ -19,6 +19,9 @@ class TourModel extends Model {
     }
     find_image_by_id(id) {
         return imageModel.find_tour_image(id);
+    }
+    find_location(id) {
+        return destinationModel.find_by_id(id);
     }
 }
 

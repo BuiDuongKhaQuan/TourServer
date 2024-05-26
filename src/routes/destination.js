@@ -5,6 +5,7 @@ const destinationRoute = express.Router();
 const upload = multer();
 
 destinationRoute.get('/all', destinationController.get_all);
+destinationRoute.get('/all-size', destinationController.get_all_size);
 destinationRoute.post('/:id/edit', upload.single('image'), destinationController.update);
 destinationRoute.post('/', upload.single('image'), destinationController.create);
 

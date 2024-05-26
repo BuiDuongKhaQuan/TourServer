@@ -5,6 +5,7 @@ const tourRouter = express.Router();
 const upload = multer();
 
 tourRouter.get('/all', tourController.get_all);
+tourRouter.get('/all-size', tourController.get_all_size);
 tourRouter.post('/', upload.array('images', 5), tourController.create);
 
 tourRouter.get('/:id', tourController.find);
