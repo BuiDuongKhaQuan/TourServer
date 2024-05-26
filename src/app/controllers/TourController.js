@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import tourModel from '../../config/db/models/Tour.js';
 import { uploadFile } from '../../utils/google.js';
+import { filterRequestBody } from '../../utils/index.js';
 
 class TourController {
     get_all(req, res) {
@@ -123,29 +124,38 @@ class TourController {
             if (Object.keys(tourData).length !== 0) {
                 tour = await tourModel.update_by_id(id, tourData);
             }
-            let linkImage = null;
-            if (req.file) {
-                // Xử lý tải lên tệp nếu tệp được cung cấp
-                const fileStream = new Readable();
-                fileStream.push(req.file.buffer);
-                fileStream.push(null);
-                const data = await uploadFile(fileStream, req.file.originalname);
-                linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
-                if (linkImage) {
-                    await tourModel.update_image_by_id(id, linkImage);
-                } else {
-                    await tourModel.upload_image_by_id(id, linkImage);
-                }
+            if (req.files && req.files.length > 0) {
+                const existingImages = await tourModel.find_image_by_id(id);
+                const existingImageUrls = existingImages.map((image) => image.image);
+
+                const uploadPromises = req.files.map(async (file, index) => {
+                    const fileStream = new Readable();
+                    fileStream.push(file.buffer);
+                    fileStream.push(null);
+
+                    const data = await uploadFile(fileStream, file.originalname);
+                    const linkImage = `https://drive.google.com/thumbnail?id=${data.id}`;
+
+                    if (existingImageUrls[index]) {
+                        // Cập nhật hình ảnh đã có
+                        return tourModel.update_all_image_by_id(id, linkImage, existingImages[index].id);
+                    } else {
+                        // Thêm hình ảnh mới
+                        return tourModel.upload_image_by_id(id, linkImage);
+                    }
+                });
+
+                await Promise.all(uploadPromises);
             }
             if (!tour) {
                 tour = await tourModel.find_by_id(id);
             }
-
+            const images = await tourModel.find_image_by_id(tour.id);
             res.send({
                 message: 'Update successfully',
                 data: {
-                    ...destination,
-                    image: linkImage, // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
+                    ...tour,
+                    images: images ? images.map((image) => image.image) : [], // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
                 },
             });
         } catch (error) {

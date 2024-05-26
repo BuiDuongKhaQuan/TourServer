@@ -14,8 +14,8 @@ class TourModel extends Model {
     upload_image_by_id(tour_id, image) {
         return imageModel.create({ tour_id, image });
     }
-    update_image_by_id(tour_id, image) {
-        return imageModel.update_tour_image(tour_id, image);
+    update_all_image_by_id(tour_id, image, image_id) {
+        return imageModel.update_tour_all_image(tour_id, image, image_id);
     }
     find_image_by_id(id) {
         return imageModel.find_tour_image(id);

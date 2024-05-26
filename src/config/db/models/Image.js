@@ -1,3 +1,4 @@
+import { connection } from '../connect.js';
 import Model from '../model.js';
 class ImageModel extends Model {
     constructor() {
@@ -18,9 +19,26 @@ class ImageModel extends Model {
         return this.find('destination_id', id);
     }
 
-    update_tour_image(id, image) {
-        return this.update('tour_id', id, { image });
+    update_tour_all_image(tour_id, image, image_id) {
+        let cThis = this;
+        return new Promise(function (myResolve, myReject) {
+            connection.query(
+                'UPDATE  ?? SET ? WHERE tour_id = ? AND id = ?',
+                [cThis.table, image, tour_id, image_id],
+                function (error, result) {
+                    if (error) throw error;
+                    validIDNotFound(result, myReject);
+                    let data = cThis.find(column, value);
+                    data.then(function (value) {
+                        myResolve(value);
+                    }).catch(function (error) {
+                        myReject(error);
+                    });
+                },
+            );
+        });
     }
+
     find_tour_image(id) {
         return this.find_all('tour_id', id);
     }
