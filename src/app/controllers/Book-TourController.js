@@ -1,6 +1,5 @@
 import bookTourModel from '../../config/db/models/Book-tour.js';
 import { filterRequestBody } from '../../utils/index.js';
-
 class BookTourController {
     get_limit_offset(req, res) {
         const { limit, offset } = req.params;
@@ -37,6 +36,34 @@ class BookTourController {
                 console.log(error);
                 res.status(500).json({ error: error.message });
             });
+    }
+    async get_watting_tour(req, res) {
+        if (!req.session.userInfo) return res.status(403).json({ error: 'Access denied!' });
+        const idUser = req.session.userInfo.id;
+        try {
+            let bookings = await bookTourModel.find_all_by_idUser(idUser, 1);
+            if (!bookings || bookings.length === 0) {
+                return res.status(404).json({ error: 'No watting tours found' });
+            }
+            res.json(bookings);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+    async get_completed_tour(req, res) {
+        if (!req.session.userInfo) return res.status(403).json({ error: 'Access denied!' });
+        const idUser = req.session.userInfo.id;
+        try {
+            let bookings = await bookTourModel.find_all_by_idUser(idUser, 2);
+            if (!bookings || bookings.length === 0) {
+                return res.status(404).json({ error: 'No completed tours found' });
+            }
+            res.json(bookings);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
     create(req, res) {
         const { id_user, id_tour, name, email, phone, id_ticket, person_quantity, child_quantity, date, message } =
