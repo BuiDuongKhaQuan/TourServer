@@ -1,3 +1,4 @@
+import { connection } from '../connect.js';
 import Model from '../model.js';
 
 class BookTour extends Model {
@@ -9,6 +10,19 @@ class BookTour extends Model {
     }
     find_by_id(id) {
         return this.find('id', id);
+    }
+    find_all_by_idUser(idUser, status) {
+        let cThis = this;
+        return new Promise(function (myResolve, myReject) {
+            connection.query(
+                'SELECT * FROM ?? WHERE id_user = ? AND status = ?',
+                [cThis.table, idUser, status],
+                function (error, result) {
+                    if (error) throw error;
+                    myResolve(result);
+                },
+            );
+        });
     }
 }
 
