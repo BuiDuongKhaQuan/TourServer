@@ -40,9 +40,11 @@ class TourController {
             const tour = await tourModel.find_by_id(id);
             if (!tour) return res.status(401).json({ error: 'Tour does not exist!' });
             const images = await tourModel.find_image_by_id(tour.id);
+            const location = await tourModel.find_location(tour.destination_id);
             const tourWithImage = {
                 ...tour,
-                image: images ? images.map((image) => image.image) : null,
+                destination: location ? location.name : null,
+                imgs: images ? images.map((image) => image.image) : null,
             };
             return res.json({ message: 'Find successful!', tour: tourWithImage });
         } catch (error) {
