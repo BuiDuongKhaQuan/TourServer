@@ -46,7 +46,7 @@ class TourController {
                 destination: location ? location.name : null,
                 imgs: images ? images.map((image) => image.image) : null,
             };
-            return res.json({ message: 'Find successful!', tour: tourWithImage });
+            return res.json({ message: 'Find successful!', data: tourWithImage });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error: 'An error occurred while processing your request.' });

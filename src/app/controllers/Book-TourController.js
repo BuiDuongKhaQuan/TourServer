@@ -66,17 +66,29 @@ class BookTourController {
         }
     }
     create(req, res) {
-        const { id_user, id_tour, name, email, phone, id_ticket, person_quantity, child_quantity, date, message } =
-            req.body;
+        const {
+            id_user,
+            id_tour,
+            name,
+            email,
+            phone,
+            ticket,
+            adult_quantity,
+            child_quantity,
+            total_price,
+            date,
+            message,
+        } = req.body;
         const bookTour = {
             id_user,
             id_tour,
             name,
             email,
             phone,
-            id_ticket,
-            person_quantity,
+            ticket,
+            adult_quantity,
             child_quantity,
+            total_price,
             date,
             message,
             status: 1,
@@ -89,9 +101,10 @@ class BookTourController {
             !name ||
             !email ||
             !phone ||
-            !id_ticket ||
-            !person_quantity ||
+            !ticket ||
+            !adult_quantity ||
             !child_quantity ||
+            !total_price ||
             !date ||
             !message
         )
