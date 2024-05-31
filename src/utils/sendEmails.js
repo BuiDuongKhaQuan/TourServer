@@ -13,7 +13,7 @@ const sendEmail = async (options) => {
     });
 
     const mailOptions = {
-        from: process.env.SMPT_MAIL,
+        from: `Travel ${process.env.SMPT_MAIL}`,
         to: options.to,
         subject: options.subject,
         html: options.message,

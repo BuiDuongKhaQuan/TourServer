@@ -8,6 +8,7 @@ import { contactRouter } from './contact.js';
 import { dealRouter } from './deal.js';
 import { reviewRouter } from './review.js';
 import { ticketRouter } from './ticket.js';
+import { paypalRoute } from './paypal.js';
 
 function route(app) {
     app.use('/blogs', blogRouter);
@@ -20,6 +21,7 @@ function route(app) {
     app.use('/deal', dealRouter);
     app.use('/review', reviewRouter);
     app.use('/ticket', ticketRouter);
+    app.use('/paypal', paypalRoute);
 }
 
 export default route;
