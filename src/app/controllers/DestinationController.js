@@ -3,20 +3,24 @@ import destinationModel from '../../config/db/models/Destination.js';
 import { filterRequestBody } from '../../utils/index.js';
 import { uploadFile } from '../../utils/google.js';
 class DestinationController {
-    get_all(req, res) {
-        let result = destinationModel.get_all();
-        result
-            .then(function (value) {
-                if (!value || value.length === 0) {
-                    res.status(404).json({ error: 'No destinations found' });
-                } else {
-                    res.json(value);
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-                res.status(500).json({ error: 'Internal Server Error' });
-            });
+    async get_all(req, res) {
+        try {
+            const destinations = await destinationModel.get_all();
+            if (!destinations) return res.status(401).json({ error: 'Destination does not exist!' });
+            const destinationsWithImages = await Promise.all(
+                destinations.map(async (destination) => {
+                    const image = await destinationModel.find_image_by_id(destination.id);
+                    return {
+                        ...destination,
+                        img: image ? image.image : null,
+                    };
+                }),
+            );
+
+            return res.json({ message: 'Get successful!', data: destinationsWithImages });
+        } catch (error) {
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
     }
     get_all_size(req, res) {
         let result = destinationModel.get_all();
