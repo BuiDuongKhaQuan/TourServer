@@ -4,20 +4,27 @@ import { uploadFile } from '../../utils/google.js';
 import { filterRequestBody } from '../../utils/index.js';
 
 class TourController {
-    get_all(req, res) {
-        let result = tourModel.get_all();
-        result
-            .then(function (value) {
-                if (!value || value.length === 0) {
-                    res.status(404).json({ error: 'No tours found' });
-                } else {
-                    res.json(value);
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-                res.status(500).json({ error: 'Internal Server Error' });
-            });
+    async get_all(req, res) {
+        const { start, page } = req.query;
+        try {
+            const tours = await tourModel.get_all();
+            if (!tours) return res.status(401).json({ error: 'Tours does not exist!' });
+            const toursWithImages = await Promise.all(
+                tours.map(async (tour) => {
+                    const images = await tourModel.find_image_by_id(tour.id);
+                    const location = await tourModel.find_location(tour.destination_id);
+                    return {
+                        ...tour,
+                        destination: location ? location.name : null,
+                        imgs: images ? images.map((image) => image.image) : null,
+                    };
+                }),
+            );
+
+            return res.json({ message: 'Find successful!', data: toursWithImages });
+        } catch (error) {
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
     }
     get_all_size(req, res) {
         let result = tourModel.get_all();
