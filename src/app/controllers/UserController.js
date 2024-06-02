@@ -143,22 +143,24 @@ class UserController {
                 res.status(500).json({ error: 'Internal server error' });
             });
     }
-    update(req, res) {
+    async update(req, res) {
         const allowedFields = ['name', 'password', 'email', 'phone', 'address', 'gender', 'status', 'role'];
         const userData = filterRequestBody(req.body, allowedFields);
         if (userData.password) {
             userData.password = encrypt(userData.password);
         }
-        let result = userModel.update_by_id(req.params.id, userData);
-        result
-            .then(function (value) {
-                console.log(value);
-                res.json(value);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        try {
+            const user = await userModel.update_by_id(req.params.id, userData);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.json(user);
+        } catch (error) {
+            console.error('Error updating user:', error);
+            res.status(500).json({ error: 'An error occurred while updating the user.' });
+        }
     }
+
     async update_avatar(req, res) {
         try {
             const { login, userInfo } = req.session;
