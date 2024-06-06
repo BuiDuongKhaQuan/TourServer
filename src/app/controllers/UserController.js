@@ -23,16 +23,23 @@ class UserController {
                 console.log(error);
             });
     }
-    get_all(req, res) {
-        let result = userModel.get_all();
-        result
-            .then(function (value) {
-                console.log(value);
-                res.json(value);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+    async get_all(req, res) {
+        try {
+            const users = await userModel.get_all();
+            if (!users) return res.status(401).json({ error: 'Users does not exist!' });
+            const usersWithImages = await Promise.all(
+                users.map(async (user) => {
+                    const avatar = await userModel.find_avatar_by_id(user.id);
+                    return {
+                        ...user,
+                        avatar: avatar ? avatar.image : null,
+                    };
+                }),
+            );
+            return res.json({ message: 'Get successful!', data: usersWithImages });
+        } catch (error) {
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
     }
     find(req, res) {
         const { id } = req.params;
@@ -144,17 +151,22 @@ class UserController {
             });
     }
     async update(req, res) {
+        const { id } = req.params;
         const allowedFields = ['name', 'password', 'email', 'phone', 'address', 'gender', 'status', 'role'];
         const userData = filterRequestBody(req.body, allowedFields);
         if (userData.password) {
             userData.password = encrypt(userData.password);
         }
         try {
-            const user = await userModel.update_by_id(req.params.id, userData);
+            const user = await userModel.update_by_id(id, userData);
+            const avatar = await userModel.find_avatar_by_id(id);
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
-            res.json(user);
+            res.json({
+                message: 'Update successfully',
+                data: { ...user, avatar: avatar ? avatar.image : null },
+            });
         } catch (error) {
             console.error('Error updating user:', error);
             res.status(500).json({ error: 'An error occurred while updating the user.' });
