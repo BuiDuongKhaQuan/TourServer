@@ -92,12 +92,11 @@ class Model {
     //delete row and return info
     // {"fieldCount":0,"affectedRows":1,"insertId":0,"serverStatus":2,"warningCount":0,"message":"","protocol41":true,"changedRows":0}
 
-    delete(id) {
+    delete(column, value) {
         let cThis = this;
         return new Promise(function (myResolve, myReject) {
-            connection.query('DELETE FROM  ??  WHERE id = ?', [cThis.table, id], function (error, result) {
+            connection.query('DELETE FROM  ?? WHERE ?? = ?', [cThis.table, column, value], function (error, result) {
                 if (error) throw error;
-                validIDNotFound(result, myReject);
                 myResolve(result);
             });
         });

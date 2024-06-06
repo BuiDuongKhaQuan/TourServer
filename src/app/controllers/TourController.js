@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 import tourModel from '../../config/db/models/Tour.js';
 import { uploadFile } from '../../utils/google.js';
 import { filterRequestBody } from '../../utils/index.js';
-
+import imageModel from '../../config/db/models/Image.js';
 class TourController {
     async get_all(req, res) {
         const { start, page } = req.query;
@@ -43,6 +43,7 @@ class TourController {
     }
     async find(req, res) {
         const { id } = req.params;
+        console.log(id);
         try {
             const tour = await tourModel.find_by_id(id);
             if (!tour) return res.status(401).json({ error: 'Tour does not exist!' });
@@ -124,7 +125,16 @@ class TourController {
     }
     async update(req, res) {
         const { id } = req.params;
-        const allowedFields = ['location', 'rate', 'name', 'date', 'person_quantity', 'information', 'price', 'status'];
+        const allowedFields = [
+            'destination_id',
+            'rate',
+            'name',
+            'date',
+            'person_quantity',
+            'information',
+            'price',
+            'status',
+        ];
         const tourData = filterRequestBody(req.body, allowedFields);
 
         try {
@@ -170,6 +180,69 @@ class TourController {
         } catch (error) {
             console.log('Error update tour:', error);
             res.status(500).send('Error update tour');
+        }
+    }
+    async deleteImage(req, res) {
+        const { imgLink, tour_id } = req.body;
+        try {
+            await imageModel.delete('image', imgLink);
+            const images = await tourModel.find_image_by_id(tour_id);
+            return res.json({
+                message: 'Delete successful!',
+                data: images ? images.map((image) => image.image) : null,
+            });
+        } catch (error) {
+            console.log('Error delete tour image:', error);
+            res.status(500).send('Error delete tour image!');
+        }
+    }
+    async update_image(req, res) {
+        const { imgLink, tour_id } = req.body;
+        try {
+            if (req.file) {
+                await imageModel.delete('image', imgLink);
+                const fileStream = new Readable();
+                fileStream.push(req.file.buffer);
+                fileStream.push(null);
+                const data = await uploadFile(fileStream, req.file.originalname);
+                const linkImg = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
+                await tourModel.upload_image_by_id(tour_id, linkImg);
+            }
+
+            const images = await tourModel.find_image_by_id(tour_id);
+            res.send({
+                message: 'Update successfully',
+                data: images ? images.map((image) => image.image) : [], // Sử dụng hình ảnh hiện có nếu không có hình ảnh mới được tải lên
+            });
+        } catch (error) {
+            console.log('Error update tour:', error);
+            res.status(500).send('Error update tour');
+        }
+    }
+    async add_image(req, res) {
+        const { id } = req.params;
+        try {
+            if (req.files && req.files.length > 0) {
+                // Xử lý tải lên nhiều tệp
+                const uploadPromises = req.files.map((file) => {
+                    const fileStream = new Readable();
+                    fileStream.push(file.buffer);
+                    fileStream.push(null);
+                    return uploadFile(fileStream, file.originalname).then((data) => {
+                        const linkImage = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
+                        return tourModel.upload_image_by_id(id, linkImage);
+                    });
+                });
+                await Promise.all(uploadPromises);
+            }
+            const images = await tourModel.find_image_by_id(id);
+            res.send({
+                message: 'Add image successfully',
+                data: images ? images.map((image) => image.image) : [],
+            });
+        } catch (error) {
+            console.log('Error creating tour:', error);
+            res.status(500).send('Error creating tour');
         }
     }
 }
