@@ -4,6 +4,7 @@ import multer from 'multer';
 const userRouter = express.Router();
 const upload = multer();
 
+userRouter.get('/all', userController.get_all);
 userRouter.post('/login', userController.login);
 userRouter.post('/logout', userController.logout);
 userRouter.post('/register', userController.register);
