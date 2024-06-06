@@ -100,7 +100,7 @@ class DestinationController {
     }
     async update(req, res) {
         const { id } = req.params;
-        const allowedFields = ['location', 'trips', 'information', 'status'];
+        const allowedFields = ['name', 'trips', 'information', 'status'];
         const destinationData = filterRequestBody(req.body, allowedFields);
 
         try {
@@ -109,13 +109,13 @@ class DestinationController {
                 destination = await destinationModel.update_by_id(id, destinationData);
             }
             let linkImage = null;
+            const imageDestination = await destinationModel.find_image_by_id(id);
             if (req.file) {
                 const fileStream = new Readable();
                 fileStream.push(req.file.buffer);
                 fileStream.push(null);
                 const data = await uploadFile(fileStream, req.file.originalname);
                 linkImage = `https://drive.google.com/thumbnail?id=${data.id}&sz=w1000`;
-                const imageDestination = await destinationModel.find_image_by_id(id);
                 if (imageDestination) {
                     await destinationModel.update_image_by_id(id, linkImage);
                 } else {
@@ -129,7 +129,7 @@ class DestinationController {
                 message: 'Update successfully',
                 data: {
                     ...destination,
-                    img: linkImage, // Sử dụng liên kết hình ảnh đã tải lên nếu có
+                    img: linkImage ? linkImage : imageDestination.image, // Sử dụng liên kết hình ảnh đã tải lên nếu có
                 },
             });
         } catch (error) {
