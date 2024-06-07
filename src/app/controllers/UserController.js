@@ -41,17 +41,20 @@ class UserController {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
-    find(req, res) {
+    async find(req, res) {
         const { id } = req.params;
-        let result = userModel.find('id', id);
-        result
-            .then(function (value) {
-                console.log(value);
-                res.json(value);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        try {
+            const user = await userModel.find_by_id(id);
+            const avatar = await userModel.find_avatar_by_id(id);
+            const userWithAvatar = {
+                ...user,
+                avatar: avatar ? avatar.image : null,
+            };
+            return res.json({ message: 'Find successful!', data: userWithAvatar });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
     }
     async login(req, res) {
         const { email, password } = req.body;

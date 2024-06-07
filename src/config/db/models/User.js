@@ -24,8 +24,11 @@ class UserModel extends Model {
     update_by_email(email, user) {
         return this.update('email', email, user);
     }
-    async find_by_email(email) {
+    find_by_email(email) {
         return this.find('email', email);
+    }
+    find_by_id(id) {
+        return this.find('id', id);
     }
     find_avatar_by_id(id) {
         return imageModel.find_avatar(id);

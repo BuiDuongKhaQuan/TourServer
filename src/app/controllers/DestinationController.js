@@ -42,12 +42,12 @@ class DestinationController {
         try {
             const destination = await destinationModel.find_by_id(id);
             if (!destination) return res.status(401).json({ error: 'Destination does not exist!' });
-            const image = await destinationModel.find_image_by_id(destination.id);
+            const image = await destinationModel.find_image_by_id(id);
             const destinationWithImage = {
                 ...destination,
                 img: image ? image.image : null,
             };
-            return res.json({ message: 'Find successful!', destination: destinationWithImage });
+            return res.json({ message: 'Find successful!', data: destinationWithImage });
         } catch (error) {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
@@ -67,7 +67,7 @@ class DestinationController {
                 }),
             );
 
-            return res.json({ message: 'Find successful!', destinations: destinationsWithImages });
+            return res.json({ message: 'Find successful!', data: destinationsWithImages });
         } catch (error) {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
