@@ -12,7 +12,6 @@ class ImageModel extends Model {
     }
 
     update_destination_image(id, image) {
-        console.log(id, image);
         return this.update('destination_id', id, { image });
     }
     find_destination_image(id) {
@@ -43,11 +42,15 @@ class ImageModel extends Model {
         return this.find_all('tour_id', id);
     }
 
-    find_blog_image(id) {
-        return this.find('blog_id', id);
-    }
     find_logo(id) {
         return this.find('company_id', id);
+    }
+
+    update_blog_image(id, image) {
+        return this.update('blog_id', id, { image });
+    }
+    find_blog_image(id) {
+        return this.find('blog_id', id);
     }
 }
 
