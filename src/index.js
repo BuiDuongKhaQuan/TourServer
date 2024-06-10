@@ -20,6 +20,12 @@ app.use(
         optionSuccessStatus: 200,
     }),
 );
+
+// import { db } from './app/models/index.js';
+// db.sequelize.sync({ force: true }).then(() => {
+//     console.log('Drop and Resync Db');
+// });
+
 //Static
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -42,7 +48,10 @@ app.use(
         store: new session.MemoryStore(),
     }),
 );
+// import crypto from 'crypto';
 
+// const secretKey = crypto.randomBytes(64).toString('hex');
+// console.log(secretKey);
 routes(app);
 
 app.listen(port, () => {
