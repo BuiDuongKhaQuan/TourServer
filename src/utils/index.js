@@ -19,8 +19,8 @@ const generateOTP = () => {
     });
 };
 
-const encrypt = (value) => {
-    const salt = bcrypt.genSaltSync(10);
+const encrypt = (value, length) => {
+    const salt = bcrypt.genSaltSync(length);
     return bcrypt.hashSync(value, salt);
 };
 

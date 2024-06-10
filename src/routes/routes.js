@@ -1,14 +1,15 @@
-import { blogRouter } from './blog.js';
-import { destinationRoute } from './destination.js';
-import { tourRouter } from './tour.js';
-import { userRouter } from './user.js';
-import { bookTourRouter } from './book_tour.js';
-import { companyRouter } from './company.js';
-import { contactRouter } from './contact.js';
-import { dealRouter } from './deal.js';
-import { reviewRouter } from './review.js';
-import { ticketRouter } from './ticket.js';
-import { paypalRoute } from './paypal.js';
+import blogRouter from './blog.routes.js';
+import authRouter from './auth.routes.js';
+import destinationRoute from './destination.routes.js';
+import tourRouter from './tour.routes.js';
+import userRouter from './user.routes.js';
+import bookTourRouter from './book_tour.routes.js';
+import companyRouter from './company.routes.js';
+import contactRouter from './contact.routes.js';
+import dealRouter from './deal.routes.js';
+import reviewRouter from './review.routes.js';
+import ticketRouter from './ticket.routes.js';
+import paypalRoute from './paypal.routes.js';
 
 function route(app) {
     app.use('/blogs', blogRouter);
@@ -17,11 +18,12 @@ function route(app) {
     app.use('/users', userRouter);
     app.use('/book', bookTourRouter);
     app.use('/company', companyRouter);
-    app.use('/contact', contactRouter);
-    app.use('/deal', dealRouter);
-    app.use('/review', reviewRouter);
-    app.use('/ticket', ticketRouter);
+    app.use('/contacts', contactRouter);
+    app.use('/deals', dealRouter);
+    app.use('/reviews', reviewRouter);
+    app.use('/tickets', ticketRouter);
     app.use('/paypal', paypalRoute);
+    app.use('/auth', authRouter);
 }
 
 export default route;

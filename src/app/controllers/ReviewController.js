@@ -1,6 +1,5 @@
 import express from 'express';
 import multer from 'multer';
-import reviewModel from '../../config/db/models/Review.js';
 import { filterRequestBody } from '../../utils/index.js';
 
 const router = express.Router();

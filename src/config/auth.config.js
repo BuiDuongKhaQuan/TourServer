@@ -1,0 +1,3 @@
+const secret =
+    '656b32820da15aa452bb3b589d959c6037534ea00711ec5bdffea8d4b42a4dadbf49493f28e736a37c6a5fd6ffe7e8372de1696333b8f37744e3adaebabf7810';
+export default secret;
