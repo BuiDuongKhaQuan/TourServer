@@ -8,11 +8,22 @@ import session from 'express-session';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
+import { Server as SocketIOServer } from 'socket.io';
+import http from 'http';
+import { db } from './app/models/index.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
-
+const server = http.createServer(app);
+const socketIo = new SocketIOServer(server, {
+    cors: {
+        origin: 'http://localhost:2908',
+        credentials: true, //access-control-allow-credentials:true
+        optionSuccessStatus: 200,
+    },
+});
 app.use(
     cors({
         origin: 'http://localhost:2908',
@@ -48,12 +59,31 @@ app.use(
         store: new session.MemoryStore(),
     }),
 );
-// import crypto from 'crypto';
 
-// const secretKey = crypto.randomBytes(64).toString('hex');
-// console.log(secretKey);
+socketIo.on('connection', async (socket) => {
+    const Review = db.review; ///Handle khi có connect từ client tới
+    console.log('New client connected' + socket.id);
+
+    const reviews = await Review.findAllReview();
+    console.log('Reviews', reviews);
+    socket.emit('initialData', reviews);
+
+    socket.on('sendDataClient', async (data) => {
+        // Save new review to database
+        const newReview = await Review.create(data);
+        const updatedReviews = await Review.findAllReview();
+
+        // Emit updated reviews to all clients
+        socketIo.emit('sendDataServer', updatedReviews);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
+
 routes(app);
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });

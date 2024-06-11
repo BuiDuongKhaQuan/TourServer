@@ -35,16 +35,28 @@ class TourController {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
-    async getLimitOffset(req, res) {
-        const { start, page } = req.query;
+    async findAll(req, res) {
+        const { column, value, start, page } = req.query;
         try {
-            const tours = await Tour.getLimitOffset(Number(page), Number(start));
-            if (!tours) return res.status(401).json({ error: 'Tours does not exist!' });
+            let tours;
+
+            if (start && page) {
+                tours = await Tour.getLimitOffset(Number(page), Number(start));
+            } else if (column && value) {
+                tours = await Tour.findAllByColumn(column, value);
+            } else {
+                return res.status(400).json({ error: 'Missing required query parameters.' });
+            }
+            if (!tours || tours.length === 0) {
+                return res.status(404).json({ error: 'Tours do not exist!' });
+            }
             return res.json({ message: 'Find successful!', data: tours });
         } catch (error) {
+            console.log(error);
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
+
     async create(req, res) {
         const { destinationId, categoryId, dealId, name, date, personQuantity, information, price, status } = req.body;
         console.log(req.body, req.files);

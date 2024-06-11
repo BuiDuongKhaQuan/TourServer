@@ -19,6 +19,9 @@ const Image = (sequelize) => {
             destinationId: {
                 type: DataTypes.INTEGER,
             },
+            reviewId: {
+                type: DataTypes.INTEGER,
+            },
             url: {
                 type: DataTypes.STRING(1000),
             },

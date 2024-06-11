@@ -1,9 +1,12 @@
 import express from 'express';
-import { default as companyController } from '../app/controllers/CompanyController.js';
+import multer from 'multer';
+import companyController from '../app/controllers/company.controller.js';
 const companyRouter = express.Router();
+const upload = multer();
 
-companyRouter.get('/', companyController.get_all);
+companyRouter.get('/all', companyController.getAll);
+companyRouter.get('/all-size', companyController.getSize);
+companyRouter.put('/:id/edit', upload.single('logo'), companyController.update);
 companyRouter.get('/:id', companyController.find);
-companyRouter.put('/:id/edit', companyController.update);
 
 export default companyRouter;
