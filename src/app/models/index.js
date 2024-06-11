@@ -74,6 +74,12 @@ db.bookTour.belongsTo(db.user, { foreignKey: 'userId', as: 'user' });
 db.bookTour.belongsTo(db.tour, { foreignKey: 'tourId', as: 'tour' });
 db.bookTour.belongsTo(db.ticket, { foreignKey: 'ticketId', as: 'ticket' });
 
+//Review
+db.review.belongsTo(db.user, { foreignKey: 'userId', as: 'user' });
+db.review.hasMany(db.image, { foreignKey: 'reviewId', as: 'images' });
+db.user.hasMany(db.review, { foreignKey: 'userId', as: 'reviews' });
+db.image.belongsTo(db.review, { foreignKey: 'reviewId', as: 'review' });
+
 // Định nghĩa mảng các role có thể có
 db.ROLES = ['user', 'admin', 'moderator'];
 

@@ -75,7 +75,20 @@ const Tour = (sequelize) => {
             ],
         });
     };
-
+    TourModel.findAllByColumn = async function (column, value) {
+        const whereClause = {};
+        whereClause[column] = value;
+        return this.findAll({
+            where: whereClause,
+            include: [
+                { model: db.destination, as: 'destination' }, // Đổi 'destinations' thành 'destination'
+                { model: db.category, as: 'category' },
+                { model: db.image, as: 'images' },
+                { model: db.review, as: 'reviews', required: false },
+                { model: db.deal, as: 'deal', required: false },
+            ],
+        });
+    };
     TourModel.getLimitOffset = async function (limit, offset) {
         return this.findAll({
             limit: limit,
