@@ -18,6 +18,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     port: dbConfig.PORT,
     dialect: dbConfig.dialect,
+    timezone: dbConfig.timezone,
     pool: {
         max: dbConfig.pool.max,
         min: dbConfig.pool.min,
@@ -83,4 +84,4 @@ db.image.belongsTo(db.review, { foreignKey: 'reviewId', as: 'review' });
 // Định nghĩa mảng các role có thể có
 db.ROLES = ['user', 'admin', 'moderator'];
 
-export { db, sequelize };
+export { db, sequelize, Sequelize };

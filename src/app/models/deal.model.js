@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 
 const Deal = (sequelize) => {
     const DealsModel = sequelize.define(
@@ -10,7 +10,7 @@ const Deal = (sequelize) => {
             quantity: {
                 type: DataTypes.INTEGER,
             },
-            dateExpiration: {
+            expiryDate: {
                 type: DataTypes.DATE,
             },
             status: {
@@ -30,6 +30,17 @@ const Deal = (sequelize) => {
     };
     DealsModel.findByIdWithDetails = async function (id) {
         return this.findByPk(id, {});
+    };
+
+    DealsModel.findAllByExpiryDate = async function () {
+        const currentDate = new Date();
+        return this.findAll({
+            where: {
+                expiryDate: {
+                    [Sequelize.Op.gt]: currentDate,
+                },
+            },
+        });
     };
 
     DealsModel.getLimitOffset = async function (limit, offset) {

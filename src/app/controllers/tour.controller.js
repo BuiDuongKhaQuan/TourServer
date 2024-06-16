@@ -1,7 +1,7 @@
 import { Readable } from 'stream';
 import { uploadFile } from '../../utils/google.js';
 import { filterRequestBody } from '../../utils/index.js';
-import { db } from '../models/index.js';
+import { db, Sequelize } from '../models/index.js';
 
 const Tour = db.tour;
 const Image = db.image;
@@ -35,11 +35,11 @@ class TourController {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
+
     async findAll(req, res) {
         const { column, value, start, page } = req.query;
         try {
             let tours;
-
             if (start && page) {
                 tours = await Tour.getLimitOffset(Number(page), Number(start));
             } else if (column && value) {
@@ -56,7 +56,45 @@ class TourController {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
+    async findAllToursWithValidDeal(req, res) {
+        try {
+            const tours = await Tour.findAllDeal();
+            if (!tours || tours.length === 0) {
+                return res.status(404).json({ error: 'Tours do not exist!' });
+            }
+            return res.json({ message: 'Find successful!', data: tours });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
+    }
+    async search(req, res) {
+        try {
+            const { name, destinations, categories, hasDeal, offset, limit } = req.body;
 
+            const searchCriteria = {};
+            if (name) {
+                searchCriteria.name = { [Sequelize.Op.like]: `%${name}%` };
+            }
+            if (destinations && destinations.length > 0) {
+                searchCriteria.destinationId = { [Sequelize.Op.in]: destinations };
+            }
+            if (categories && categories.length > 0) {
+                searchCriteria.categoryId = { [Sequelize.Op.in]: categories };
+            }
+            if (hasDeal) {
+                searchCriteria.dealId = { [Sequelize.Op.ne]: null };
+            }
+            const { count, rows } = await Tour.search(searchCriteria, { offset, limit });
+            if (!rows || rows.length === 0) {
+                return res.json({ message: 'Tours do not exist!', data: rows });
+            }
+            return res.json({ message: 'Find successful!', data: rows, total: count });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
+    }
     async create(req, res) {
         const { destinationId, categoryId, dealId, name, date, personQuantity, information, price, status } = req.body;
         console.log(req.body, req.files);

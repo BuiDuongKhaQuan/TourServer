@@ -56,6 +56,9 @@ const BookTour = (sequelize) => {
             checkoutStatus: {
                 type: DataTypes.INTEGER,
             },
+            paymentMethod: {
+                type: DataTypes.INTEGER,
+            },
         },
         {
             charset: 'utf8mb4',

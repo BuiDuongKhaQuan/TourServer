@@ -31,7 +31,7 @@ class PaypalController {
     async sendMailInforOrder(req, res) {
         try {
             const { orderData, email, tourBookedId } = req.body;
-            await BookTourModel.updateById(tourBookedId, { checkout_status: 1 });
+            await BookTourModel.updateById(tourBookedId, { checkoutStatus: 2, paymentMethod: 1 });
             await sendEmail({
                 to: email,
                 subject: 'Payment Confirmation',

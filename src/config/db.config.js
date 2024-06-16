@@ -1,10 +1,11 @@
 const dbConfig = {
     HOST: 'localhost',
     USER: 'root',
-    PASSWORD: 'admin',
+    PASSWORD: '',
     DB: 'tour',
     PORT: 3307,
     dialect: 'mysql',
+    timezone: '+07:00',
     pool: {
         max: 5,
         min: 0,

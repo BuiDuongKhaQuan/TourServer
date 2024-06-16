@@ -231,7 +231,7 @@ img,p{margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helv
 <!--[if !mso]>-->
 <td class="t19" style="width:338px;padding:0 3px 0 3px;">
 <!--<![endif]-->
-<h3 class="t18" style="margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:26px;font-weight:400;font-style:normal;font-size:20px;text-decoration:none;text-transform:none;direction:ltr;color:#FCCA46;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t17" style="margin:0;Margin:0;font-weight:700;mso-line-height-rule:exactly;">Amount of money: </span>${orderData.purchase_units[0].payments.captures[0].amount.currency_code} ${orderData.purchase_units[0].payments.captures[0].amount.value} USD</h3></td>
+<h3 class="t18" style="margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:26px;font-weight:400;font-style:normal;font-size:20px;text-decoration:none;text-transform:none;direction:ltr;color:#FCCA46;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t17" style="margin:0;Margin:0;font-weight:700;mso-line-height-rule:exactly;">Amount of money: </span>${orderData.purchase_units[0].payments.captures[0].amount.currency_code} ${orderData.purchase_units[0].payments.captures[0].amount.value}</h3></td>
 </tr></table>
 </td></tr><tr><td>
 <!--[if mso]>
