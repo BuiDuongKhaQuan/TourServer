@@ -54,7 +54,7 @@ class BookTourController {
                 false,
             );
             if (!bookings || bookings.length === 0) {
-                return res.status(404).json({ error: 'No watting tours found' });
+                return res.json({ message: 'No bookings found', data: [] });
             }
             res.json({ message: 'Get watting sucessfully', data: bookings });
         } catch (error) {
@@ -132,12 +132,13 @@ class BookTourController {
                 'status',
                 'totalPrice',
                 'checkoutStatus',
+                'paymentMethod',
                 'message',
             ];
             const bookTourData = filterRequestBody(req.body, allowedFields);
             await BookTour.updateById(id, bookTourData);
             const bookings = await BookTour.findByIdWithDetails(id);
-            res.json({ message: 'Get sucessfully', data: bookings });
+            res.json({ message: 'Update sucessfully', data: bookings });
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: 'Internal Server Error' });

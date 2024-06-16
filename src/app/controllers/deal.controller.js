@@ -33,6 +33,16 @@ class DealsController {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
+    async findAllByExpiryDate(req, res) {
+        try {
+            const deals = await Deals.findAllByExpiryDate();
+            if (!deals) return res.status(401).json({ error: 'Deals does not exist!' });
+            return res.json({ message: 'Find successful!', data: deals });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
+    }
     async getLimitOffset(req, res) {
         const { start, page } = req.query;
         try {
@@ -45,10 +55,10 @@ class DealsController {
     }
 
     async create(req, res) {
-        const { offer, quantity, dateExpiration, status } = req.body;
+        const { offer, quantity, expiryDate, status } = req.body;
         console.log(req.body, req.file);
         try {
-            if (!offer || !quantity || !dateExpiration || !status)
+            if (!offer || !quantity || !expiryDate || !status)
                 return res.status(400).json({ error: 'Missing required fields!' });
             const deals = await Deals.createDeals(req.body);
             res.send({ message: 'Create successfully', data: deals.dataValues });

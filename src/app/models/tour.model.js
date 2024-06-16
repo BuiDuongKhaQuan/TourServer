@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { db } from './index.js';
 
 const Tour = (sequelize) => {
@@ -89,6 +89,57 @@ const Tour = (sequelize) => {
             ],
         });
     };
+    TourModel.search = async function (searchCriteria, options = {}) {
+        const { offset = 0, limit = 10 } = options;
+        const include = [
+            { model: db.destination, as: 'destination' },
+            { model: db.category, as: 'category' },
+            { model: db.image, as: 'images' },
+            { model: db.review, as: 'reviews', required: false },
+            { model: db.deal, as: 'deal', required: false },
+        ];
+
+        if (searchCriteria.hasDeal) {
+            include.push({
+                model: db.deal,
+                as: 'deal',
+                where: {
+                    expiryDate: { [Sequelize.Op.gt]: new Date() },
+                },
+                required: true, // Nếu muốn lọc bỏ các tour không có deal, sử dụng true thay vì false
+            });
+        }
+        return this.findAndCountAll({
+            where: searchCriteria,
+            distinct: true, // Sử dụng DISTINCT
+            include,
+            offset,
+            limit,
+        });
+    };
+    TourModel.findAllDeal = async function () {
+        return this.findAll({
+            where: {
+                dealId: {
+                    [Sequelize.Op.ne]: null,
+                },
+            },
+            include: [
+                {
+                    model: db.deal,
+                    as: 'deal',
+                    where: {
+                        expiryDate: { [Sequelize.Op.gt]: new Date() },
+                    },
+                },
+                { model: db.destination, as: 'destination' },
+                { model: db.category, as: 'category' },
+                { model: db.image, as: 'images' },
+                { model: db.review, as: 'reviews', required: false },
+            ],
+        });
+    };
+
     TourModel.getLimitOffset = async function (limit, offset) {
         return this.findAll({
             limit: limit,
