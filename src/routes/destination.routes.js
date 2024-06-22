@@ -8,6 +8,7 @@ const upload = multer();
 
 destinationRoute.get('/all', destinationController.getAll);
 destinationRoute.get('/all-size', destinationController.getSize);
+destinationRoute.post('/search', destinationController.search);
 destinationRoute.put(
     '/:id/edit',
     [authJwt.verifyToken, authJwt.isAdmin, upload.single('image')],

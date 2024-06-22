@@ -1,7 +1,7 @@
 import { Readable } from 'stream';
 import { filterRequestBody } from '../../utils/index.js';
 import { uploadFile } from '../../utils/google.js';
-import { db } from '../models/index.js';
+import { Sequelize, db } from '../models/index.js';
 
 const Blog = db.blog;
 const Image = db.image;
@@ -46,7 +46,24 @@ class BlogController {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
-
+    async search(req, res) {
+        try {
+            const { name } = req.body;
+            console.log(name);
+            const searchCriteria = {};
+            if (name) {
+                searchCriteria.topic = { [Sequelize.Op.like]: `%${name}%` };
+            }
+            const { count, rows } = await Blog.search(searchCriteria);
+            if (!rows || rows.length === 0) {
+                return res.json({ message: 'Blog do not exist!', data: rows });
+            }
+            return res.json({ message: 'Find successful!', data: rows, total: count });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
+    }
     async create(req, res) {
         const { topic, information, status } = req.body;
         try {

@@ -41,7 +41,13 @@ const Blog = (sequelize) => {
             include: [{ model: db.image, as: 'image' }],
         });
     };
-
+    BlogModel.search = async function (searchCriteria, options = {}) {
+        return this.findAndCountAll({
+            where: searchCriteria,
+            distinct: true, // Sử dụng DISTINCT
+            include: [{ model: db.image, as: 'image' }],
+        });
+    };
     BlogModel.updateById = async function (id, data) {
         await this.update(data, {
             where: { id },

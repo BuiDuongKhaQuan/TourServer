@@ -3,8 +3,8 @@ import categoryModel from '../app/controllers/category.controller.js';
 import { authJwt } from '../middleware/index.js';
 const categoryRoute = express.Router();
 
-categoryRoute.get('/all', authJwt.verifyToken, categoryModel.getAll);
-categoryRoute.get('/all-size', authJwt.verifyToken, categoryModel.getSize);
+categoryRoute.get('/all', categoryModel.getAll);
+categoryRoute.get('/all-size', categoryModel.getSize);
 categoryRoute.post('/:id/edit', [authJwt.verifyToken, authJwt.isAdmin], categoryModel.update);
 categoryRoute.post('/', [authJwt.verifyToken, authJwt.isAdmin], categoryModel.create);
 categoryRoute.get('/', categoryModel.getLimitOffset);
