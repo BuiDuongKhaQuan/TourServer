@@ -44,7 +44,14 @@ const Destination = (sequelize) => {
             include: [{ model: db.image, as: 'image' }],
         });
     };
-
+    DestinationModel.search = async function (searchCriteria, options = {}) {
+        const include = [{ model: db.image, as: 'image' }];
+        return this.findAndCountAll({
+            where: searchCriteria,
+            distinct: true, // Sử dụng DISTINCT
+            include,
+        });
+    };
     DestinationModel.updateById = async function (id, data) {
         return this.update(data, {
             where: { id },

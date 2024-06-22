@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 import { filterRequestBody } from '../../utils/index.js';
 import { uploadFile } from '../../utils/google.js';
 
-import { db } from '../models/index.js';
+import { Sequelize, db } from '../models/index.js';
 
 const Destination = db.destination;
 const Image = db.image;
@@ -47,7 +47,23 @@ class DestinationController {
             return res.status(500).json({ error: 'An error occurred while processing your request.' });
         }
     }
-
+    async search(req, res) {
+        try {
+            const { name } = req.body;
+            const searchCriteria = {};
+            if (name) {
+                searchCriteria.name = { [Sequelize.Op.like]: `%${name}%` };
+            }
+            const { count, rows } = await Destination.search(searchCriteria);
+            if (!rows || rows.length === 0) {
+                return res.json({ message: 'Destination do not exist!', data: rows });
+            }
+            return res.json({ message: 'Find successful!', data: rows, total: count });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
+    }
     async create(req, res) {
         const { name, trips, information, status } = req.body;
         console.log(req.body, req.file);

@@ -7,6 +7,7 @@ const upload = multer();
 
 blogRouter.get('/all', blogController.getAll);
 blogRouter.get('/all-size', blogController.getSize);
+blogRouter.post('/search', blogController.search);
 blogRouter.put('/:id/edit', [authJwt.verifyToken, authJwt.isAdmin, upload.single('image')], blogController.update);
 blogRouter.post('/', [authJwt.verifyToken, authJwt.isAdmin, upload.single('image')], blogController.create);
 blogRouter.get('/', blogController.getLimitOffset);
