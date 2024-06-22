@@ -105,7 +105,7 @@ class TourController {
             const newTour = {
                 destinationId,
                 categoryId,
-                dealId: dealId ? dealId : null,
+                dealId: dealId !== null ? dealId : 0,
                 name,
                 date,
                 personQuantity,
