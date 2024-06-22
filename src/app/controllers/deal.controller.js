@@ -56,7 +56,7 @@ class DealsController {
 
     async create(req, res) {
         const { offer, quantity, expiryDate, status } = req.body;
-        console.log(req.body, req.file);
+        console.log(req.body);
         try {
             if (!offer || !quantity || !expiryDate || !status)
                 return res.status(400).json({ error: 'Missing required fields!' });
