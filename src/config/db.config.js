@@ -1,9 +1,9 @@
 const dbConfig = {
-    HOST: 'localhost',
+    HOST: 'roundhouse.proxy.rlwy.net',
     USER: 'root',
-    PASSWORD: '',
-    DB: 'tour',
-    PORT: 3307,
+    PASSWORD: 'VhYPSDKjjnuKOwmqkGxhUTmKfPpubsRU',
+    DB: 'railway',
+    PORT: 28425,
     dialect: 'mysql',
     timezone: '+07:00',
     pool: {
