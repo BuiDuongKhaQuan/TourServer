@@ -15,19 +15,19 @@ import { setHeaders } from '../middleware/common.js';
 
 function route(app) {
     app.use(setHeaders);
-    app.use('/blogs', blogRouter);
-    app.use('/tours', tourRouter);
-    app.use('/destinations', destinationRoute);
-    app.use('/users', userRouter);
-    app.use('/bookings', bookTourRouter);
-    app.use('/company', companyRouter);
-    app.use('/contacts', contactRouter);
-    app.use('/deals', dealRouter);
-    app.use('/reviews', reviewRouter);
-    app.use('/tickets', ticketRouter);
-    app.use('/paypal', paypalRoute);
-    app.use('/categories', categoriesRoute);
-    app.use('/auth', authRouter);
+    app.use('/api/blogs', blogRouter);
+    app.use('/api/tours', tourRouter);
+    app.use('/api/destinations', destinationRoute);
+    app.use('/api/users', userRouter);
+    app.use('/api/bookings', bookTourRouter);
+    app.use('/api/company', companyRouter);
+    app.use('/api/contacts', contactRouter);
+    app.use('/api/deals', dealRouter);
+    app.use('/api/reviews', reviewRouter);
+    app.use('/api/tickets', ticketRouter);
+    app.use('/api/paypal', paypalRoute);
+    app.use('/api/categories', categoriesRoute);
+    app.use('/api/auth', authRouter);
 }
 
 export default route;

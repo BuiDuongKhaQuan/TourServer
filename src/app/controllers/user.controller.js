@@ -93,7 +93,11 @@ class UserController {
         try {
             if (!name || !password || !email)
                 return res.status(400).json({ error: 'Missing required fields: name, password, email' });
+            const userCheck = await User.findByColumn('email', email);
 
+            if (userCheck) {
+                return res.status(400).send({ message: 'Email đã tồn tại!!' });
+            }
             const user = await User.create({
                 name,
                 email,
