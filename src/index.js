@@ -19,16 +19,14 @@ const port = process.env.PORT || 3001;
 const server = http.createServer(app);
 const socketIo = new SocketIOServer(server, {
     cors: {
-        origin: 'http://localhost:3000',
-        // origin: 'http://3.26.145.187/',
+        origin: process.env.ORIGIN || 'http://localhost:3000',
         credentials: true, //access-control-allow-credentials:true
         optionSuccessStatus: 200,
     },
 });
 app.use(
     cors({
-        origin: 'http://localhost:3000',
-        // origin: 'http://3.26.145.187/',
+        origin: process.env.ORIGIN || 'http://localhost:3000',
         credentials: true, //access-control-allow-credentials:true
         optionSuccessStatus: 200,
     }),
